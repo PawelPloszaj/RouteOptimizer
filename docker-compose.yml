@@ -1,0 +1,43 @@
+services:
+  database:
+    image: mysql:5.7
+    container_name: database
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: routeoptimizer
+      MYSQL_USER: user
+      MYSQL_PASSWORD: p@ssw0rd
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  db-data:
