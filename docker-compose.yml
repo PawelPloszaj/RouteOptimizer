@@ -35,9 +35,48 @@ services:
     networks:
       - network
 
+  ors:
+    image: ghcr.io/gis-ops/openrouteservice:latest
+    container_name: ors
+    ports:
+      - "8081:8080"
+    volumes:
+      - ors-graphs:/ors/graphs
+      - ors-elevation-cache:/ors/elevation_cache
+      - ./ors/data:/ors-core/data
+      - ./ors/ors-conf:/ors-conf
+    environment:
+      - BUILD_GRAPHS=False
+      - JAVA_OPTS=-Xms2g -Xmx4g
+    networks:
+      - network
+
+  nominatim:
+    image: mediagis/nominatim:4.3
+    container_name: nominatim
+    ports:
+      - "7070:8080"
+    environment:
+      - PBF_PATH=/app/data/osm_file.pbf
+      - IMPORT_STYLE=full
+      - THREADS=4
+      - NOMINATIM_PASSWORD=secret
+      - NOMINATIM_MODE=frontend
+    volumes:
+      - ./ors/data:/app/data
+      - nominatim-data:/var/lib/postgresql/14/main
+      - nominatim-build:/nominatim/build
+    networks:
+      - network
+
+
 networks:
   network:
     driver: bridge
 
 volumes:
   db-data:
+  ors-graphs:
+  ors-elevation-cache:
+  nominatim-data:
+  nominatim-build:

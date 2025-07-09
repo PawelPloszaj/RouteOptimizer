@@ -45,3 +45,11 @@ Thumbs.db
 frontend/node_modules/
 frontend/dist/
 frontend/.angular/
+
+### Ignore build data & maps ###
+ors/graphs/
+ors/elevation_cache/
+ors/osm/
+
+### Don't ignore config ###
+!ors/ors-conf/
